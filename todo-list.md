@@ -1,0 +1,4 @@
+- context menu
+- auto start when start window
+- get in-out time using pyppeteer and set start time
+- create menu {All, AM, PM} // not important
