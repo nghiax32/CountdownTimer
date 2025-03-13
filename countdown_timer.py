@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 DEFAULT_WORKING_TIME = ((8 * 60 + 1 * 60) + 48) * 60
 
 class CountdownTimer:
-    def __init__(self, root, working_time):
+    def __init__(self, root, working_time=DEFAULT_WORKING_TIME):
         self.root = root
         self.root.title("Countdown Timer")
         self.root.overrideredirect(True)
@@ -12,9 +12,10 @@ class CountdownTimer:
         self.root.configure(bg="white")  
         
         self.start_time = datetime.now()
+        self.fixed_end_time = datetime.now().replace(hour=18, minute=48, second=0, microsecond=0)
         self.end_time = min(
             self.start_time + timedelta(seconds=working_time),
-            self.start_time.replace(hour=18, minute=48, second=0, microsecond=0)
+            self.fixed_end_time
         )   
         self.over_time = timedelta(0) 
         self.counting_up = False
