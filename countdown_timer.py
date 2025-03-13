@@ -25,15 +25,33 @@ class CountdownTimer:
 
         self.io_label = tk.Label(root, text="", font=("Segoe UI", 10), bg="white")
         self.io_label.pack()
+        self.io_label.config(text=f"{self.start_time.strftime('%H:%M')}     {self.end_time.strftime('%H:%M')}")
 
-        self.io_label.config(text=f"Start: {self.start_time.strftime('%H:%M')}   End: {self.end_time.strftime('%H:%M')}")
+        self.context_menu = tk.Menu(self.root, tearoff=0)
+        self.context_menu.add_command(label="Update Check-in Time", command=self.update_start_time)
+        self.context_menu.add_command(label="Quit", command=self.root.quit)
+
+        self.root.bind("<ButtonPress-1>", self.start_move)
+        self.root.bind("<B1-Motion>", self.on_move)
+        self.root.bind("<Button-3>", self.show_context_menu)
 
         self.update_timer()
-
-        self.timer_label.bind("<ButtonPress-1>", self.start_move)
-        self.timer_label.bind("<B1-Motion>", self.on_move)
-
         self.root.mainloop()
+
+    def start_move(self, event):
+        self.start_x = event.x
+        self.start_y = event.y
+
+    def on_move(self, event):
+        x = self.root.winfo_x() + (event.x - self.start_x)
+        y = self.root.winfo_y() + (event.y - self.start_y)
+        self.root.geometry(f"+{x}+{y}")
+
+    def show_context_menu(self, event):
+        self.context_menu.post(event.x_root, event.y_root)
+
+    def update_start_time(self):
+        pass
 
     def update_timer(self):
         now = datetime.now()
@@ -57,15 +75,6 @@ class CountdownTimer:
             self.timer_label.config(text=over_str)
 
         self.root.after(1000, self.update_timer)
-            
-    def start_move(self, event):
-        self.start_x = event.x
-        self.start_y = event.y
-
-    def on_move(self, event):
-        x = self.root.winfo_x() + (event.x - self.start_x)
-        y = self.root.winfo_y() + (event.y - self.start_y)
-        self.root.geometry(f"+{x}+{y}")
 
 if __name__ == "__main__":
     root = tk.Tk()
