@@ -33,6 +33,8 @@ class CountdownTimer:
         self.timer_label.bind("<ButtonPress-1>", self.start_move)
         self.timer_label.bind("<B1-Motion>", self.on_move)
 
+        self.root.mainloop()
+
     def update_timer(self):
         now = datetime.now()
         remaining_time = self.end_time - now
@@ -68,4 +70,3 @@ class CountdownTimer:
 if __name__ == "__main__":
     root = tk.Tk()
     app = CountdownTimer(root) 
-    root.mainloop()
