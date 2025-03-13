@@ -5,27 +5,39 @@ DEFAULT_WORKING_TIME = ((8 * 60 + 1 * 60) + 48) * 60
 
 class CountdownTimer:
     def __init__(self, root, working_time=DEFAULT_WORKING_TIME):
+        # Set the root window
         self.root = root
         self.root.title("Countdown Timer")
         self.root.overrideredirect(True)
         self.root.attributes('-topmost', True)
-        self.root.configure(bg="white")  
+        self.root.configure(bg="white")
+
+        # This is the real time when you arrive at the office. Its only for showing
+        self.arrive_time = datetime.now()
         
-        self.start_time = datetime.now()
-        self.fixed_end_time = datetime.now().replace(hour=18, minute=48, second=0, microsecond=0)
+        # This is the time that company system set for you to check-in
+        self.start_time = max(
+            datetime.now(),
+            datetime.now().replace(hour=7, minute=0, second=0, microsecond=0)
+        )
+
+        # This is the time that you should leave the office
         self.end_time = min(
             self.start_time + timedelta(seconds=working_time),
-            self.fixed_end_time
-        )   
-        self.over_time = timedelta(0) 
-        self.counting_up = False
+            datetime.now().replace(hour=18, minute=48, second=0, microsecond=0)
+        )
+
+        # This is the time you work overtime
+        self.over_time = None
+
+        self.is_update_start_time = False
 
         self.timer_label = tk.Label(root, text="", font=("Segoe UI", 20), bg="white")
         self.timer_label.pack()
 
         self.io_label = tk.Label(root, text="", font=("Segoe UI", 10), bg="white")
         self.io_label.pack()
-        self.io_label.config(text=f"{self.start_time.strftime('%H:%M')}     {self.end_time.strftime('%H:%M')}")
+        self.io_label.config(text=f"{self.arrive_time.strftime('%H:%M')}  {self.end_time.strftime('%H:%M')}")
 
         self.context_menu = tk.Menu(self.root, tearoff=0)
         self.context_menu.add_command(label="Update Check-in Time", command=self.update_start_time)
@@ -51,6 +63,7 @@ class CountdownTimer:
         self.context_menu.post(event.x_root, event.y_root)
 
     def update_start_time(self):
+        # self.start_time = callAPI()
         pass
 
     def update_timer(self):
@@ -62,12 +75,11 @@ class CountdownTimer:
             remaining_str = ":".join(f"{int(x):02}" for x in remaining_str.split(":"))
             self.timer_label.config(text=remaining_str)
         else:
-            if not self.counting_up:
-                self.counting_up = True 
+            if self.over_time is None:
                 self.start_countup_time = now
                 self.root.configure(bg="green")
                 self.timer_label.config(fg="red", bg="green")
-                self.io_label.config(fg="red", bg="green")
+                self.io_label.config(bg="green")
 
             self.over_time = now - self.start_countup_time
             over_str = str(self.over_time).split(".")[0]
