@@ -76,10 +76,8 @@ class CountdownTimer:
             self.timer_label.config(text=remaining_str)
         else:
             if self.over_time is None:
-                self.start_countup_time = now
-                self.root.configure(bg="green")
-                self.timer_label.config(fg="red", bg="green")
-                self.io_label.config(bg="green")
+                self.start_countup_time = self.end_time
+                self.timer_label.config(fg="red")
 
             self.over_time = now - self.start_countup_time
             over_str = str(self.over_time).split(".")[0]
